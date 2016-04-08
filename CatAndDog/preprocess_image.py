@@ -5,6 +5,7 @@ import PIL
 from numpy import array
 import h5py
 import numpy as np
+# I forgot add y value , so add another preprocess_image_v2.py, sorry for the mistake
 def resize_image(img,w,h,outputfile):
 	# load the image and show it
 	arr = array(img)
