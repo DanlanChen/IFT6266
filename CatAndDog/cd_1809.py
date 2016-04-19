@@ -125,11 +125,11 @@ def predict(x,f1,f2,f3,optimizer):
         writer = csv.writer(f)
         writer.writerow( [ 'id', 'label' ] )
         writer.writerows(izip(x,predictions))
-    print ('file saved' + str(f3))
+    print ('file saved ' + str(f3))
 def main():
 	batch_size = 32
 	nb_classes = 2
-	nb_epoch = 20
+	nb_epoch = 25
 	# input image dimensions
 	img_rows, img_cols = 128,128
 
@@ -144,22 +144,34 @@ def main():
 	sgd = SGD(lr=lr, momentum=momentum, nesterov=False)
 	rmsprop = RMSprop(lr = 0.005, rho = 0.9, episilon = 1e-06)
 	rmsprop2 = RMSprop(lr = 0.001)
-	f = h5py.File("/NOBACKUP/catsanddogs.hdf5", "r")
+	# f1 = '/NOBACKUP/cats_dog_kaggle_image_data/whole_image.hdf5'
+	# [data_x,data_y] = load_h5(f1)
+	f1 = '/NOBACKUP/cats_dog_kaggle_image_data/flip_image.hdf5'
+	[data_x_f,data_y_f] = load_h5(f1)
+	f2 = '/NOBACKUP/cats_dog_kaggle_image_data/resize_image.hdf5'
+	[data_x_o,data_y_o] = load_h5(f2)
 
-	data_x = f["/data/x_128x128"][()]
+	#f = h5py.File("/NOBACKUP/catsanddogs.hdf5", "r")
+	#data_x = f["/data/x_128x128"][()]
+	# data_x = data_x[0:100]
+	data_x = np.concatenate((data_x_f,data_x_o),axis = 0)
+	data_y = np.concatenate((data_y_f,data_y_o), axis =0)
+	# f = h5py.File("/NOBACKUP/catsanddogs.hdf5", "r")
+
+	# data_x = f["/data/x_128x128"][()]
 	data_x = data_x.transpose(0,3,1,2)
 	data_x = data_x.reshape(data_x.shape[0], 3,img_rows, img_cols,)
 	data_x = data_x.astype("float32")
 	# data_x = data_x[0:100]
 	print (data_x.shape,"data_x_shape")
 #	print (data_x)
-	data_y = f["/data/y"][()]
+	# data_y = f["/data/y"][()]
 	p_3 = np.random.permutation(len(data_x))
 	# p_3 = np.random.permutation(50)
 	x = data_x[p_3]
 	y = data_y[p_3]
-	f1,f2,f3,f4,f5 = "model_04_18_7.json", "weights_04_18_7.hdf5","prediction_model_04_18_7_2.csv","07_model_train_1.json","07_model_train_2.json"  
-	# train(nb_conv,img_rows,img_cols,nb_pool,batch_size,nb_epoch,x,y,f2,f1,sgd,f4)
+	f1,f2,f3,f4,f5 = "model_04_18_9.json", "weights_04_18_9.hdf5","prediction_model_04_18_9.csv","09_model_train_1.json","09_model_train_2.json"  
+	train(nb_conv,img_rows,img_cols,nb_pool,batch_size,nb_epoch,x,y,f2,f1,sgd,f4)
 	#train(nb_conv,img_rows,img_cols,nb_pool,batch_size,nb_epoch,x,y,f2,f1,rmsprop2,f5)
 
 	test_file = '/NOBACKUP/cats_dog_kaggle_image_data/test_resize.hdf5'
@@ -172,7 +184,7 @@ def main():
 	#im.save("0_test.jpg")
 	x_test = x_test.transpose(0,3,1,2)
 	x_test = x_test.reshape(x_test.shape[0], 3,img_rows, img_cols,)
-	x_test = np.array(x_test, dtype = "unint8")
+	x_test = np.array(x_test, dtype = "float32")
 	print (x_test.shape)
 	      
 	predict(x_test,f1,f2,f3,sgd)
