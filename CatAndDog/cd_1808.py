@@ -142,7 +142,7 @@ def main():
 	lr = 0.01
 	momentum = 0.9
 	sgd = SGD(lr=lr, momentum=momentum, nesterov=False)
-	rmsprop = RMSprop(lr = 0.005, rho = 0.9, episilon = 1e-06)
+	rmsprop = RMSprop(lr = 0.005, rho = 0.9, epsilon = 1e-06)
 	rmsprop2 = RMSprop(lr = 0.001)
 	f1 = '/NOBACKUP/cats_dog_kaggle_image_data/whole_image.hdf5'
 	[data_x,data_y] = load_h5(f1)
